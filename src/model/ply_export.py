@@ -53,7 +53,12 @@ def export_ply(
     f_dc = harmonics[..., 0]
     f_rest = harmonics[..., 1:].flatten(start_dim=1)
 
-    dtype_full = [(attribute, "f4") for attribute in construct_list_of_attributes(0 if save_sh_dc_only else f_rest.shape[1])]
+    dtype_full = [
+        (attribute, "f4")
+        for attribute in construct_list_of_attributes(
+            0 if save_sh_dc_only else f_rest.shape[1]
+        )
+    ]
     elements = np.empty(means.shape[0], dtype=dtype_full)
     attributes = [
         means.detach().cpu().numpy(),
