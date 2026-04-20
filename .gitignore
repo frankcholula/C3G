@@ -176,3 +176,6 @@ cython_debug/
 table.tex
 /baselines
 /test/*
+
+# third-party
+third_party/
