@@ -36,6 +36,7 @@ from torchvision.utils import save_image
 
 sys.path.insert(0, str(Path(__file__).parents[2]))
 
+from src.dataset.shims.crop_shim import rescale_and_crop
 from src.misc.cam_utils import camera_normalization
 from src.model.ply_export import export_ply
 
@@ -240,15 +241,15 @@ def main():
     print("Encoder ready.")
 
     # --- Build batch ---
-    images_in = torch.nn.functional.interpolate(
-        images, size=(224, 224), mode="bilinear", align_corners=False
-    )
+    # Use the same rescale+center-crop as the dataset class so intrinsics stay
+    # consistent with the 224x224 encoder input (avoids horizontal squeezing).
+    images_in, intrinsics_in = rescale_and_crop(images, intrinsics, (224, 224))
     images_in = images_in * 2 - 1  # [-1, 1]
 
     context = {
-        "image":       images_in.unsqueeze(0).to(device),       # [1, V, 3, H, W]
+        "image":       images_in.unsqueeze(0).to(device),       # [1, V, 3, 224, 224]
         "extrinsics":  extrinsics.unsqueeze(0).to(device),      # [1, V, 4, 4]
-        "intrinsics":  intrinsics.unsqueeze(0).to(device),      # [1, V, 3, 3]
+        "intrinsics":  intrinsics_in.unsqueeze(0).to(device),   # [1, V, 3, 3] adjusted
         "near":        torch.full((1, v), 0.1, device=device),
         "far":         torch.full((1, v), 100.0, device=device),
         "index":       torch.arange(v).unsqueeze(0).to(device),

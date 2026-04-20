@@ -176,6 +176,7 @@ cython_debug/
 table.tex
 /baselines
 /test/*
+.vscode/
 
 # third-party
 third_party/
