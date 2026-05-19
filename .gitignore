@@ -180,3 +180,4 @@ table.tex
 
 # third-party
 third_party/
+wandb/
