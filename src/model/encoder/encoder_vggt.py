@@ -230,8 +230,8 @@ class EncoderVGGT(Encoder[EncoderVGGTCfg]):
         # Dump visualizations if needed.
         if visualization_dump is not None:
             visualization_dump['depth'] = vis_depth.unsqueeze(-1).unsqueeze(-1)
-            visualization_dump["scales"] = None
-            visualization_dump["rotations"] = None
+            visualization_dump["scales"] = rearrange(gaussians.scales, "b n srf spp xyz -> b (n srf spp) xyz")
+            visualization_dump["rotations"] = rearrange(gaussians.rotations, "b n srf spp q -> b (n srf spp) q")
             visualization_dump["means"] = None
             visualization_dump['opacities'] = None
 
